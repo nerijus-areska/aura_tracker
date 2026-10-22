@@ -20,6 +20,16 @@ class MainActivity : FlutterActivity() {
                         val pm = getSystemService(POWER_SERVICE) as PowerManager
                         result.success(pm.isIgnoringBatteryOptimizations(packageName))
                     }
+                    "clearNotificationCache" -> {
+                        // Clears the flutter_local_notifications plugin's SharedPreferences cache.
+                        // Required when the cache contains stale entries from an older plugin version
+                        // that cause "Missing type parameter" crashes in loadScheduledNotifications().
+                        val prefs = applicationContext.getSharedPreferences(
+                            "scheduled_notifications", android.content.Context.MODE_PRIVATE
+                        )
+                        prefs.edit().remove("scheduled_notifications").apply()
+                        result.success(null)
+                    }
                     "requestIgnoreBatteryOptimizations" -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             val pm = getSystemService(POWER_SERVICE) as PowerManager

@@ -61,12 +61,22 @@ class NotificationService {
     } catch (_) {}
   }
 
+  /// Clears the plugin's internal SharedPreferences cache.
+  /// Needed when stale entries from an older plugin version cause
+  /// "Missing type parameter" crashes that block cancel/schedule operations.
+  Future<void> _clearStaleCache() async {
+    try {
+      await _channel.invokeMethod('clearNotificationCache');
+    } catch (_) {}
+  }
+
   Future<void> reschedule({
     required int morningHour,
     required int morningMinute,
     required int eveningHour,
     required int eveningMinute,
   }) async {
+    await _clearStaleCache();
     await _plugin.cancel(_morningId);
     await _plugin.cancel(_eveningId);
     await _scheduleDaily(
@@ -107,7 +117,7 @@ class NotificationService {
       body,
       _nextInstanceOf(hour, minute),
       details,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
