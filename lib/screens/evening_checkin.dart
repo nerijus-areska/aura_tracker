@@ -24,6 +24,7 @@ class _EveningCheckinScreenState extends State<EveningCheckinScreen> {
   int _alcohol = 0;
   int _mealsSkipped = 0;
   String _sunExposure = 'none';
+  final TextEditingController _notesController = TextEditingController();
 
   late final DateTime _date;
 
@@ -41,7 +42,14 @@ class _EveningCheckinScreenState extends State<EveningCheckinScreen> {
       _alcohol = existing.alcohol;
       _mealsSkipped = existing.mealsSkipped;
       _sunExposure = existing.sunExposure;
+      _notesController.text = existing.notes ?? '';
     }
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
   }
 
   bool get _isValid =>
@@ -64,6 +72,7 @@ class _EveningCheckinScreenState extends State<EveningCheckinScreen> {
       alcohol: _alcohol,
       mealsSkipped: _mealsSkipped,
       sunExposure: _sunExposure,
+      notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
     );
     await widget.storage.saveEveningCheckin(checkin);
     if (mounted) Navigator.pop(context);
@@ -232,6 +241,43 @@ class _EveningCheckinScreenState extends State<EveningCheckinScreen> {
               value: _mealsSkipped,
               onChanged: (v) => setState(() => _mealsSkipped = v),
               labels: const ['None', '1', '2'],
+            ),
+
+            const SizedBox(height: 24),
+
+            // Notes
+            const Text(
+              'Notes',
+              style: TextStyle(
+                color: AppTheme.textSecondary,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _notesController,
+              maxLines: 5,
+              style: const TextStyle(color: AppTheme.textPrimary, fontSize: 14),
+              decoration: InputDecoration(
+                hintText: 'Anything else about your day...',
+                hintStyle: TextStyle(color: AppTheme.textMuted),
+                filled: true,
+                fillColor: AppTheme.surface,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppTheme.lavender.withOpacity(0.2)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppTheme.lavender.withOpacity(0.2)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppTheme.lavender.withOpacity(0.5)),
+                ),
+                contentPadding: const EdgeInsets.all(14),
+              ),
             ),
 
             const SizedBox(height: 32),

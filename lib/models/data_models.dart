@@ -37,6 +37,7 @@ class EveningCheckin {
   final int alcohol; // 0, 1, 2 (0=none, 1=one drink, 2=two+)
   final int mealsSkipped; // 0, 1, 2
   final String sunExposure; // none, little, medium, high
+  final String? notes;
 
   EveningCheckin({
     required this.id,
@@ -49,6 +50,7 @@ class EveningCheckin {
     this.alcohol = 0,
     this.mealsSkipped = 0,
     this.sunExposure = 'none',
+    this.notes,
   });
 
   Map<String, dynamic> toJson() => {
@@ -62,6 +64,7 @@ class EveningCheckin {
         'alcohol': alcohol,
         'mealsSkipped': mealsSkipped,
         'sunExposure': sunExposure,
+        'notes': notes,
       };
 
   factory EveningCheckin.fromJson(Map<String, dynamic> json) => EveningCheckin(
@@ -75,6 +78,7 @@ class EveningCheckin {
         alcohol: json['alcohol'] ?? 0,
         mealsSkipped: json['mealsSkipped'] ?? 0,
         sunExposure: json['sunExposure'] ?? 'none',
+        notes: json['notes'],
       );
 }
 
